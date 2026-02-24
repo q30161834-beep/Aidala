@@ -176,9 +176,11 @@
             <p>Generează copywriting persuasiv cu AI</p>
         </header>
 
+        {% if has_keys %}
         <div class="success" style="background: #e8f5e9; color: #2e7d32;">
             API Keys configurate: DeepSeek, Groq, OpenRouter
         </div>
+        {% endif %}
 
         <div class="tabs">
             <div class="tab active" onclick="showTab('generate')">Generează</div>
