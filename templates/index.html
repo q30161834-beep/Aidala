@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CopySpell AI</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        header p { opacity: 0.9; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .output {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            min-height: 200px;
+            border: 2px solid #e0e0e0;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .api-status {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .api-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .api-badge.active { background: #efe; color: #2a2; }
+        .api-badge.inactive { background: #fee; color: #c33; }
+        .history-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .history-item:hover { background: #e9ecef; }
+        .history-item small {
+            color: #666;
+            display: block;
+            margin-top: 5px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ CopySpell AI</h1>
+            <p>Generează copywriting persuasiv cu AI</p>
+        </header>
+
+        <div class="success" style="background: #e8f5e9; color: #2e7d32;">
+            API Keys configurate: DeepSeek, Groq, OpenRouter
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('generate')">Generează</div>
+            <div class="tab" onclick="showTab('config')">Configurare</div>
+            <div class="tab" onclick="showTab('history')">Istoric</div>
+        </div>
+
+        <!-- Generate Tab -->
+        <div id="generate" class="tab-content active">
+            <div class="card">
+                <h2>📝 Creează Conținut</h2>
+                <form id="generateForm">
+                    <div class="form-group">
+                        <label>Cuvinte Cheie / Topic</label>
+                        <textarea id="keywords" placeholder="Ex: slăbit 40kg, eșec diete, curs live" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Tip de Conținut</label>
+                            <select id="content_type">
+                                {% for ct in options.content_types %}
+                                <option value="{{ ct.id }}">{{ ct.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Framework</label>
+                            <select id="framework">
+                                {% for fw in options.frameworks %}
+                                <option value="{{ fw }}">{{ fw }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Audiență Țintă</label>
+                            <select id="audience">
+                                {% for a in options.audiences %}
+                                <option value="{{ a.id }}">{{ a.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Ton de Scriere</label>
+                            <select id="tone">
+                                {% for t in options.tones %}
+                                <option value="{{ t.id }}">{{ t.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Context Adițional (opțional)</label>
+                        <textarea id="additional_context" placeholder="Orice detalii suplimentare..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Provider Preferat</label>
+                        <select id="provider">
+                            <option value="">Auto (Smart Routing)</option>
+                            {% for p in options.providers %}
+                            <option value="{{ p }}">{{ p|title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <button type="submit" id="generateBtn">🚀 Generează Conținut</button>
+                </form>
+                
+                <div id="output" style="display: none;">
+                    <h3 style="margin: 20px 0 10px;">Rezultat:</h3>
+                    <div class="output" id="outputContent"></div>
+                    <div style="margin-top: 10px;">
+                        <button onclick="copyOutput()">📋 Copiază</button>
+                        <button onclick="saveOutput()">💾 Salvează</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Config Tab -->
+        <div id="config" class="tab-content">
+            <div class="card">
+                <h2>⚙️ Configurare API Keys</h2>
+                <div id="apiStatus" class="api-status"></div>
+                
+                <form id="configForm">
+                    <div class="form-group">
+                        <label>DeepSeek API Key</label>
+                        <input type="password" id="deepseek_key" placeholder="sk-...">
+                        <small>Obține de la: <a href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</a></small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Groq API Key</label>
+                        <input type="password" id="groq_key" placeholder="gsk-...">
+                        <small>Obține de la: <a href="https://console.groq.com/keys" target="_blank">console.groq.com</a></small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>OpenRouter API Key</label>
+                        <input type="password" id="openrouter_key" placeholder="sk-or-...">
+                        <small>Obține de la: <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai</a></small>
+                    </div>
+                    
+                    <button type="submit">💾 Salvează Configurația</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history" class="tab-content">
+            <div class="card">
+                <h2>📜 Istoric Generări</h2>
+                <div id="historyList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentOutput = '';
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'history') loadHistory();
+            if (tabName === 'config') loadConfig();
+        }
+
+        document.getElementById('generateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Se generează...';
+            
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        keywords: document.getElementById('keywords').value,
+                        content_type: document.getElementById('content_type').value,
+                        framework: document.getElementById('framework').value,
+                        audience: document.getElementById('audience').value,
+                        tone: document.getElementById('tone').value,
+                        additional_context: document.getElementById('additional_context').value,
+                        provider: document.getElementById('provider').value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentOutput = data.content;
+                    document.getElementById('outputContent').textContent = data.content;
+                    document.getElementById('output').style.display = 'block';
+                    document.getElementById('output').innerHTML += `
+                        <div class="success">
+                            ✓ Generat cu ${data.provider} | Model: ${data.model} | Tokeni: ${data.tokens || 'N/A'}
+                        </div>
+                    `;
+                } else {
+                    alert('Eroare: ' + data.error);
+                }
+            } catch (err) {
+                alert('Eroare: ' + err.message);
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '🚀 Generează Conținut';
+        });
+
+        document.getElementById('configForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        deepseek: document.getElementById('deepseek_key').value,
+                        groq: document.getElementById('groq_key').value,
+                        openrouter: document.getElementById('openrouter_key').value
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('✅ Configurație salvată!');
+                    loadConfig();
+                }
+            } catch (err) {
+                alert('Eroare: ' + err.message);
+            }
+        });
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const data = await response.json();
+                
+                document.getElementById('apiStatus').innerHTML = `
+                    <span class="api-badge ${data.deepseek ? 'active' : 'inactive'}">
+                        DeepSeek: ${data.deepseek ? '✓' : '✗'}
+                    </span>
+                    <span class="api-badge ${data.groq ? 'active' : 'inactive'}">
+                        Groq: ${data.groq ? '✓' : '✗'}
+                    </span>
+                    <span class="api-badge ${data.openrouter ? 'active' : 'inactive'}">
+                        OpenRouter: ${data.openrouter ? '✓' : '✗'}
+                    </span>
+                `;
+            } catch (err) {
+                console.error('Eroare la încărcarea config:', err);
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/history');
+                const data = await response.json();
+                
+                const list = document.getElementById('historyList');
+                if (data.length === 0) {
+                    list.innerHTML = '<p>Nicio generare încă.</p>';
+                    return;
+                }
+                
+                list.innerHTML = data.map(item => `
+                    <div class="history-item" onclick='loadHistoryItem(${JSON.stringify(item)})'>
+                        <strong>${item.content_type}</strong> - ${item.framework}
+                        <small>${item.audience} | ${new Date(item.timestamp).toLocaleString('ro-RO')}</small>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Eroare la încărcarea istoricului:', err);
+            }
+        }
+
+        function loadHistoryItem(item) {
+            document.getElementById('keywords').value = item.keywords;
+            document.getElementById('content_type').value = item.content_type_id || 'facebook_post';
+            document.getElementById('framework').value = item.framework;
+            document.getElementById('audience').value = item.audience_id || 'weight_loss_seeker';
+            document.getElementById('tone').value = item.tone_id || 'empathetic';
+            
+            currentOutput = item.content;
+            document.getElementById('outputContent').textContent = item.content;
+            document.getElementById('output').style.display = 'block';
+            
+            showTab('generate');
+        }
+
+        function copyOutput() {
+            navigator.clipboard.writeText(currentOutput).then(() => {
+                alert('✅ Copiat în clipboard!');
+            });
+        }
+
+        function saveOutput() {
+            const blob = new Blob([currentOutput], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'copyspell_content.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Load config on page load
+        loadConfig();
+    </script>
+</body>
+</html>
