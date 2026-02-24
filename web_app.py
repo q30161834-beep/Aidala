@@ -78,7 +78,8 @@ def generate():
             audience_id=data.get("audience", "weight_loss_seeker"),
             tone_id=data.get("tone", "empathetic"),
             additional_context=data.get("additional_context", ""),
-            preferred_provider=data.get("provider") or None
+            preferred_provider=data.get("provider") or None,
+            word_count=data.get("word_count", "normal")
         ))
         loop.close()
         
