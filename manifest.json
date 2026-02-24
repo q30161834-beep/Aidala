@@ -20,7 +20,8 @@
     "providers/openrouter.py",
     "providers/__init__.py",
     "models/__init__.py",
-    "templates/index.html"
+    "templates/index.html",
+    "config/default_settings.py"
   ],
   "optional_files": [
     "templates/dashboard.html",
