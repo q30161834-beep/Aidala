@@ -39,6 +39,16 @@ load_local_dev_keys()
 app = Flask(__name__)
 generator = ContentGenerator()
 
+# Import and start auto updater
+try:
+    from auto_updater import start_auto_update_checker
+    AUTO_UPDATER_AVAILABLE = True
+    start_auto_update_checker()
+    print("Auto update checker started (checks every 10 minutes)")
+except ImportError:
+    AUTO_UPDATER_AVAILABLE = False
+    print("Auto updater not available")
+
 
 def get_options():
     """Get all options for the form."""
@@ -79,7 +89,11 @@ def generate():
             tone_id=data.get("tone", "empathetic"),
             additional_context=data.get("additional_context", ""),
             preferred_provider=data.get("provider") or None,
-            word_count=data.get("word_count", "normal")
+            word_count=data.get("word_count", "normal"),
+            custom_audience=data.get("custom_audience"),
+            custom_tone=data.get("custom_tone"),
+            custom_content_type=data.get("custom_content_type"),
+            custom_framework=data.get("custom_framework")
         ))
         loop.close()
         
