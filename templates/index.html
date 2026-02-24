@@ -353,14 +353,25 @@
                         <textarea id="additional_context" placeholder="Orice detalii suplimentare..."></textarea>
                     </div>
                     
-                    <div class="form-group">
-                        <label>Provider Preferat</label>
-                        <select id="provider">
-                            <option value="">Auto (Smart Routing)</option>
-                            {% for p in options.providers %}
-                            <option value="{{ p }}">{{ p|title }}</option>
-                            {% endfor %}
-                        </select>
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Lungime Conținut</label>
+                            <select id="word_count">
+                                <option value="short">Scurt (concis)</option>
+                                <option value="normal" selected>Normal (standard)</option>
+                                <option value="long">Lung (detaliat)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Provider Preferat</label>
+                            <select id="provider">
+                                <option value="">Auto (Smart Routing)</option>
+                                {% for p in options.providers %}
+                                <option value="{{ p }}">{{ p|title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
                     
                     <button type="submit" id="generateBtn">🚀 Generează Conținut</button>
@@ -450,7 +461,8 @@
                         audience: document.getElementById('audience').value,
                         tone: document.getElementById('tone').value,
                         additional_context: document.getElementById('additional_context').value,
-                        provider: document.getElementById('provider').value
+                        provider: document.getElementById('provider').value,
+                        word_count: document.getElementById('word_count').value
                     })
                 });
                 
@@ -584,6 +596,7 @@
             document.getElementById('framework').value = item.framework;
             document.getElementById('audience').value = item.audience_id || 'weight_loss_seeker';
             document.getElementById('tone').value = item.tone_id || 'empathetic';
+            document.getElementById('word_count').value = item.word_count || 'normal';
             
             currentOutput = item.content;
             document.getElementById('outputContent').textContent = item.content;
