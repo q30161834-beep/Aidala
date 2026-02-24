@@ -9,6 +9,33 @@ from config.settings import settings
 from core.content_generator import ContentGenerator
 from models import AUDIENCES, TONES, CONTENT_TYPES, FRAMEWORKS
 
+# Setează API keys implicite doar dacă nu rulează ca executabil sau dacă nu există .env
+import sys
+from pathlib import Path
+
+def load_local_dev_keys():
+    """Încarcă API keys doar pentru dezvoltare locală"""
+    if not getattr(sys, 'frozen', False):  # Nu e executabil
+        # Verifică dacă există .env sau dacă toate API keys lipsesc
+        env_path = Path('.env')
+        
+        if (not env_path.exists() and 
+            not settings.deepseek_api_key and 
+            not settings.groq_api_key and 
+            not settings.openrouter_api_key):
+            # Încarcă API keys implicite doar pentru dezvoltare locală
+            try:
+                from local_config import LOCAL_API_KEYS
+                settings.deepseek_api_key = LOCAL_API_KEYS['deepseek']
+                settings.groq_api_key = LOCAL_API_KEYS['groq']
+                settings.openrouter_api_key = LOCAL_API_KEYS['openrouter']
+                settings.save_api_keys()
+            except ImportError:
+                # local_config.py nu există, deci nu setăm API keys implicite
+                pass
+
+load_local_dev_keys()
+
 app = Flask(__name__)
 generator = ContentGenerator()
 
