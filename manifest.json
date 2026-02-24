@@ -1,7 +1,7 @@
 {
   "name": "CopySpell AI",
   "description": "Lista fisierelor care se actualizeaza automat",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "files": [
     "web_app.py",
     "launcher.py",
