@@ -4,6 +4,7 @@ import sys
 import webbrowser
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 # Adauga directorul curent in path
 if getattr(sys, 'frozen', False):
@@ -32,13 +33,25 @@ def open_browser():
     time.sleep(2)
     webbrowser.open('http://127.0.0.1:5000')
 
+def start_extension_service():
+    """Start the extension service on port 5001"""
+    try:
+        from extension_service import app as extension_app
+        print("Starting extension service on port 5001...")
+        extension_app.run(host='127.0.0.1', port=5001, debug=False, use_reloader=False, threaded=True)
+    except Exception as e:
+        print(f"Error starting extension service: {e}")
+
+
 def main():
     """Functia principala"""
     print("=" * 60)
     print("  CopySpell AI - Smart Copywriting Generator")
     print("=" * 60)
     print()
-    print("Pornesc serverul...")
+    print("Pornesc serverele...")
+    print("Main server: http://127.0.0.1:5000")
+    print("Extension service: http://127.0.0.1:5001")
     print("API-uri configurate: DeepSeek, Groq, OpenRouter")
     print()
     print("Aplicatia se va deschide automat in browser")
@@ -48,12 +61,15 @@ def main():
     print("=" * 60)
     print()
     
-    # Porneste browserul in thread separat
-    browser_thread = threading.Thread(target=open_browser)
-    browser_thread.daemon = True
-    browser_thread.start()
+    # Start the extension service in a separate thread
+    extension_thread = threading.Thread(target=start_extension_service, daemon=True)
+    extension_thread.start()
     
-    # Porneste Flask
+    # Start browser after a brief delay
+    time.sleep(2)
+    webbrowser.open('http://127.0.0.1:5000')
+    
+    # Start the main Flask app
     app.run(host='127.0.0.1', port=5000, debug=False)
 
 if __name__ == '__main__':
