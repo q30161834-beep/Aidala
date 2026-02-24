@@ -44,7 +44,8 @@ class ContentGenerator:
         framework: str,
         audience: str,
         tone: str,
-        result: RouterResult
+        result: RouterResult,
+        word_count: str = "normal"
     ):
         """Add a generation to history."""
         entry = {
@@ -57,7 +58,8 @@ class ContentGenerator:
             "content": result.content if result.success else None,
             "provider": result.provider_used,
             "success": result.success,
-            "tokens": result.tokens_used
+            "tokens": result.tokens_used,
+            "word_count": word_count
         }
         self.history.append(entry)
         self._save_history()
@@ -79,7 +81,8 @@ class ContentGenerator:
         audience_id: str,
         tone_id: str,
         additional_context: str = "",
-        preferred_provider: Optional[str] = None
+        preferred_provider: Optional[str] = None,
+        word_count: str = "normal"
     ) -> RouterResult:
         """Generate content based on parameters."""
         
@@ -108,7 +111,8 @@ Exemple: {' | '.join(tone.examples[:2])}"""
             tone=tone_desc,
             content_type=content_type.name,
             framework=framework,
-            additional_context=additional_context
+            additional_context=additional_context,
+            word_count=word_count
         )
         
         # Add hashtags for Instagram
@@ -129,7 +133,8 @@ Exemple: {' | '.join(tone.examples[:2])}"""
             framework=framework,
             audience=audience.name,
             tone=tone.name,
-            result=result
+            result=result,
+            word_count=word_count
         )
         
         return result
@@ -142,7 +147,8 @@ Exemple: {' | '.join(tone.examples[:2])}"""
         audience_id: str,
         tone_id: str,
         additional_context: str = "",
-        preferred_provider: Optional[str] = None
+        preferred_provider: Optional[str] = None,
+        word_count: str = "normal"
     ) -> AsyncGenerator[str, None]:
         """Generate content with streaming."""
         
@@ -165,7 +171,8 @@ Dorințe: {', '.join(audience.desires[:3])}"""
             tone=tone_desc,
             content_type=content_type.name,
             framework=framework,
-            additional_context=additional_context
+            additional_context=additional_context,
+            word_count=word_count
         )
         
         if content_type_id == "instagram_caption":
@@ -198,7 +205,8 @@ Dorințe: {', '.join(audience.desires[:3])}"""
                     tokens_used=None,
                     attempts=1,
                     errors=[]
-                )
+                ),
+                word_count=word_count
             )
     
     def get_options(self) -> Dict[str, Any]:
