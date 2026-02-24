@@ -45,12 +45,22 @@ FOCUSEAZA PE:
         tone: str,
         content_type: str,
         framework: str,
-        additional_context: str = ""
+        additional_context: str = "",
+        word_count: str = "normal"
     ) -> str:
         """Build a complete prompt based on parameters."""
         
         framework_instructions = PromptTemplates.FRAMEWORKS.get(framework, "")
         content_instructions = PromptTemplates.CONTENT_TYPES.get(content_type, "")
+        
+        # Adjust content length based on word_count preference
+        length_modifier = ""
+        if word_count == "short":
+            length_modifier = "\n\nCERINTE PRIVIND LUNGIMEA: Concis și la obiect, maxim 70% din lungimea standard."
+        elif word_count == "long":
+            length_modifier = "\n\nCERINTE PRIVIND LUNGIMEA: Detaliat și extins, cu exemple multiple și explicații ample."
+        else:  # normal
+            length_modifier = "\n\nCERINTE PRIVIND LUNGIMEA: Lungimea standard conform cerințelor pentru acest tip de conținut."
         
         prompt = f"""Creeaza continut de marketing persuasiv folosind framework-ul {framework}.
 
@@ -66,6 +76,8 @@ STRUCTURA FRAMEWORK-ULUI {framework}:
 
 CERINTE SPECIFICE PENTRU {content_type}:
 {content_instructions}
+
+{length_modifier}
 
 CONTEX ADITIONAL:
 {additional_context}
