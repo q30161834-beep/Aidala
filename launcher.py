@@ -22,6 +22,9 @@ try:
 except Exception as e:
     print(f"Nu s-a putut verifica update-ul: {e}")
 
+# Nu setăm API keys în launcher pentru a evita blocarea de către GitHub
+# API keys sunt gestionate separat în fișiere de configurare
+
 from web_app import app
 
 def open_browser():
