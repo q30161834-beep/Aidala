@@ -29,5 +29,8 @@
     "static/style.css",
     "static/script.js"
   ],
-  "notes": "Adauga sau scoate fisiere din lista 'files' pentru a controla ce se actualizeaza"
+  "excluded_files": [
+    "local_config.py"
+  ],
+  "notes": "Adauga sau scoate fisiere din lista 'files' pentru a controla ce se actualizează"
 }
