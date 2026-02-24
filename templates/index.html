@@ -296,6 +296,7 @@
             <div class="tab active" onclick="showTab('generate')">Generează</div>
             <div class="tab" onclick="showTab('config')">Configurare</div>
             <div class="tab" onclick="showTab('history')">Istoric</div>
+            <div class="tab" onclick="showTab('extension')">Extensie</div>
         </div>
 
         <!-- Generate Tab -->
@@ -315,7 +316,9 @@
                                 {% for ct in options.content_types %}
                                 <option value="{{ ct.id }}">{{ ct.name }}</option>
                                 {% endfor %}
+                                <option value="custom_content_type">✨ Tip Conținut Personalizat</option>
                             </select>
+                            <button type="button" onclick="toggleCustomSection('content_type')" style="margin-top: 8px; padding: 8px 12px; background: #f0f0f0; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em;">Toggle Custom</button>
                         </div>
                         
                         <div class="form-group">
@@ -324,7 +327,59 @@
                                 {% for fw in options.frameworks %}
                                 <option value="{{ fw }}">{{ fw }}</option>
                                 {% endfor %}
+                                <option value="custom_framework">✨ Framework Personalizat</option>
                             </select>
+                            <button type="button" onclick="toggleCustomSection('framework')" style="margin-top: 8px; padding: 8px 12px; background: #f0f0f0; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em;">Toggle Custom</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Content Type Section -->
+                    <div id="customContentTypeSection" class="form-group" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 10px; border: 1px solid #e0e0e0;">
+                        <h4 style="margin-bottom: 15px; color: #333;">📝 Tip Conținut Personalizat</h4>
+                        <div class="form-group">
+                            <label>Nume Tip Conținut</label>
+                            <input type="text" id="custom_content_type_name" placeholder="Ex: Review produs, Case study">
+                        </div>
+                        <div class="form-group">
+                            <label>Descriere</label>
+                            <input type="text" id="custom_content_type_description" placeholder="Descrierea tipului de conținut">
+                        </div>
+                        <div class="form-group">
+                            <label>Lungime optimă</label>
+                            <input type="text" id="custom_content_type_optimal_length" placeholder="Ex: 200-300 cuvinte, 1-2 minute">
+                        </div>
+                        <div class="form-group">
+                            <label>Elemente cheie (separate prin virgulă)</label>
+                            <input type="text" id="custom_content_type_key_elements" placeholder="Ex: hook, beneficii, CTA">
+                        </div>
+                        <div class="form-group">
+                            <label>Cele mai bune practici (separate prin virgulă)</label>
+                            <input type="text" id="custom_content_type_best_practices" placeholder="Ex: folosește emoji-uri, menționează avantaje">
+                        </div>
+                        <div class="form-group">
+                            <label>Platforme (separate prin virgulă)</label>
+                            <input type="text" id="custom_content_type_platforms" placeholder="Ex: Facebook, Instagram, LinkedIn">
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Framework Section -->
+                    <div id="customFrameworkSection" class="form-group" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 10px; border: 1px solid #e0e0e0;">
+                        <h4 style="margin-bottom: 15px; color: #333;">🏗️ Framework Personalizat</h4>
+                        <div class="form-group">
+                            <label>Nume Framework</label>
+                            <input type="text" id="custom_framework_name" placeholder="Ex: PROBLEM-SOLUTION-PROOF">
+                        </div>
+                        <div class="form-group">
+                            <label>Descriere</label>
+                            <input type="text" id="custom_framework_description" placeholder="Descrierea framework-ului">
+                        </div>
+                        <div class="form-group">
+                            <label>Pași (separați prin virgulă)</label>
+                            <input type="text" id="custom_framework_steps" placeholder="Ex: Problem, Solution, Proof, Call to Action">
+                        </div>
+                        <div class="form-group">
+                            <label>Potrivit pentru (separate prin virgulă)</label>
+                            <input type="text" id="custom_framework_best_for" placeholder="Ex: Email, Video Script, Landing Page">
                         </div>
                     </div>
                     
@@ -335,7 +390,9 @@
                                 {% for a in options.audiences %}
                                 <option value="{{ a.id }}">{{ a.name }}</option>
                                 {% endfor %}
+                                <option value="custom_audience">✨ Audiență Personalizată</option>
                             </select>
+                            <button type="button" onclick="toggleCustomSection('audience')" style="margin-top: 8px; padding: 8px 12px; background: #f0f0f0; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em;">Toggle Custom</button>
                         </div>
                         
                         <div class="form-group">
@@ -344,7 +401,63 @@
                                 {% for t in options.tones %}
                                 <option value="{{ t.id }}">{{ t.name }}</option>
                                 {% endfor %}
+                                <option value="custom_tone">✨ Ton Personalizat</option>
                             </select>
+                            <button type="button" onclick="toggleCustomSection('tone')" style="margin-top: 8px; padding: 8px 12px; background: #f0f0f0; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em;">Toggle Custom</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Audience Section -->
+                    <div id="customAudienceSection" class="form-group" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 10px; border: 1px solid #e0e0e0;">
+                        <h4 style="margin-bottom: 15px; color: #333;">👤 Audiență Personalizată</h4>
+                        <div class="form-group">
+                            <label>Nume Audiență</label>
+                            <input type="text" id="custom_audience_name" placeholder="Ex: Public țintă pentru produsul meu">
+                        </div>
+                        <div class="form-group">
+                            <label>Descriere</label>
+                            <input type="text" id="custom_audience_description" placeholder="Descrierea publicului țintă">
+                        </div>
+                        <div class="form-group">
+                            <label>Puncte dureroase (separate prin virgulă)</label>
+                            <input type="text" id="custom_audience_pain_points" placeholder="Ex: lipsă de timp, costuri ridicate">
+                        </div>
+                        <div class="form-group">
+                            <label>Dorințe (separate prin virgulă)</label>
+                            <input type="text" id="custom_audience_desires" placeholder="Ex: economisire timp, rezultate rapide">
+                        </div>
+                        <div class="form-group">
+                            <label>Obiecții (separate prin virgulă)</label>
+                            <input type="text" id="custom_audience_objections" placeholder="Ex: nu cred că funcționează">
+                        </div>
+                        <div class="form-group">
+                            <label>Stil de limbaj</label>
+                            <input type="text" id="custom_audience_language_style" placeholder="Ex: Empatic, profesional, prietenos">
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Tone Section -->
+                    <div id="customToneSection" class="form-group" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 10px; border: 1px solid #e0e0e0;">
+                        <h4 style="margin-bottom: 15px; color: #333;">🎭 Ton Personalizat</h4>
+                        <div class="form-group">
+                            <label>Nume Ton</label>
+                            <input type="text" id="custom_tone_name" placeholder="Ex: Brand-ul meu">
+                        </div>
+                        <div class="form-group">
+                            <label>Descriere</label>
+                            <input type="text" id="custom_tone_description" placeholder="Descrierea stilului de comunicare">
+                        </div>
+                        <div class="form-group">
+                            <label>Caracteristici (separate prin virgulă)</label>
+                            <input type="text" id="custom_tone_characteristics" placeholder="Ex: profesional, prietenos, autoritar">
+                        </div>
+                        <div class="form-group">
+                            <label>Exemple (separate prin virgulă)</label>
+                            <input type="text" id="custom_tone_examples" placeholder="Ex: Hai să vorbim despre..., Vă recomandăm...">
+                        </div>
+                        <div class="form-group">
+                            <label>Potrivit pentru (separate prin virgulă)</label>
+                            <input type="text" id="custom_tone_best_for" placeholder="Ex: B2B, servicii, coaching">
                         </div>
                     </div>
                     
@@ -425,6 +538,65 @@
                 <div id="historyList"></div>
             </div>
         </div>
+
+        <!-- Extension Tab -->
+        <div id="extension" class="tab-content">
+            <div class="card">
+                <h2>🔧 Extinde Conținutul</h2>
+                <div class="warning">
+                    <strong>Notă:</strong> Această funcționalitate extinde conținutul existent folosind AI.
+                    Puteți selecta un element din istoric sau introduceți conținutul manual.
+                </div>
+                
+                <form id="extensionForm">
+                    <div class="form-group">
+                        <label>Conținut de Extins:</label>
+                        <textarea id="extensionContent" placeholder="Introduceți conținutul de extins aici..." rows="8"></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Tip de Extindere:</label>
+                            <select id="expansionType">
+                                <option value="general">Generală (adâncire)</option>
+                                <option value="details">Adaugă Detalii</option>
+                                <option value="examples">Include Exemple</option>
+                                <option value="benefits">Evidențiază Beneficii</option>
+                                <option value="features">Detaliază Caracteristici</option>
+                                <option value="applications">Explorează Aplicații</option>
+                                <option value="technical">Adâncire Tehnică</option>
+                                <option value="creative">Extindere Creativă</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Focalizare:</label>
+                            <select id="expansionFocus">
+                                <option value="comprehensive">Comprehensivă</option>
+                                <option value="analytical">Analitică</option>
+                                <option value="narrative">Narrativă</option>
+                                <option value="practical">Practică</option>
+                                <option value="strategic">Strategică</option>
+                                <option value="educational">Educativă</option>
+                                <option value="persuasive">Persuasivă</option>
+                                <option value="creative">Creativă</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="extendBtn">🔄 Extinde Conținut</button>
+                </form>
+                
+                <div id="extensionOutput" style="display: none;">
+                    <h3 style="margin: 20px 0 10px;">Conținut Extins:</h3>
+                    <div class="output" id="extensionOutputContent"></div>
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button onclick="copyExtensionOutput()">📋 Copiază</button>
+                        <button onclick="saveExtensionOutput()">💾 Salvează</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -440,6 +612,79 @@
             if (tabName === 'config') loadConfig();
         }
 
+        function toggleCustomSection(section) {
+            const sectionMap = {
+                'audience': 'customAudienceSection',
+                'tone': 'customToneSection',
+                'content_type': 'customContentTypeSection',
+                'framework': 'customFrameworkSection'
+            };
+            
+            const sectionId = sectionMap[section];
+            if (sectionId) {
+                const element = document.getElementById(sectionId);
+                if (element) {
+                    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+                }
+            }
+        }
+
+        function getCustomData() {
+            const audienceSelect = document.getElementById('audience');
+            const toneSelect = document.getElementById('tone');
+            const contentTypeSelect = document.getElementById('content_type');
+            const frameworkSelect = document.getElementById('framework');
+            
+            const customData = {};
+            
+            // Get custom audience data if selected
+            if (audienceSelect.value === 'custom_audience') {
+                customData.custom_audience = {
+                    name: document.getElementById('custom_audience_name').value,
+                    description: document.getElementById('custom_audience_description').value,
+                    pain_points: document.getElementById('custom_audience_pain_points').value.split(',').map(s => s.trim()).filter(s => s),
+                    desires: document.getElementById('custom_audience_desires').value.split(',').map(s => s.trim()).filter(s => s),
+                    objections: document.getElementById('custom_audience_objections').value.split(',').map(s => s.trim()).filter(s => s),
+                    language_style: document.getElementById('custom_audience_language_style').value
+                };
+            }
+            
+            // Get custom tone data if selected
+            if (toneSelect.value === 'custom_tone') {
+                customData.custom_tone = {
+                    name: document.getElementById('custom_tone_name').value,
+                    description: document.getElementById('custom_tone_description').value,
+                    characteristics: document.getElementById('custom_tone_characteristics').value.split(',').map(s => s.trim()).filter(s => s),
+                    examples: document.getElementById('custom_tone_examples').value.split(',').map(s => s.trim()).filter(s => s),
+                    best_for: document.getElementById('custom_tone_best_for').value.split(',').map(s => s.trim()).filter(s => s)
+                };
+            }
+            
+            // Get custom content type data if selected
+            if (contentTypeSelect.value === 'custom_content_type') {
+                customData.custom_content_type = {
+                    name: document.getElementById('custom_content_type_name').value,
+                    description: document.getElementById('custom_content_type_description').value,
+                    optimal_length: document.getElementById('custom_content_type_optimal_length').value,
+                    key_elements: document.getElementById('custom_content_type_key_elements').value.split(',').map(s => s.trim()).filter(s => s),
+                    best_practices: document.getElementById('custom_content_type_best_practices').value.split(',').map(s => s.trim()).filter(s => s),
+                    platforms: document.getElementById('custom_content_type_platforms').value.split(',').map(s => s.trim()).filter(s => s)
+                };
+            }
+            
+            // Get custom framework data if selected
+            if (frameworkSelect.value === 'custom_framework') {
+                customData.custom_framework = {
+                    name: document.getElementById('custom_framework_name').value,
+                    description: document.getElementById('custom_framework_description').value,
+                    steps: document.getElementById('custom_framework_steps').value.split(',').map(s => s.trim()).filter(s => s),
+                    best_for: document.getElementById('custom_framework_best_for').value.split(',').map(s => s.trim()).filter(s => s)
+                };
+            }
+            
+            return customData;
+        }
+
         document.getElementById('generateForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('generateBtn');
@@ -451,19 +696,24 @@
             document.getElementById('output').style.display = 'block';
             
             try {
+                const customData = getCustomData();
+                
+                const payload = {
+                    keywords: document.getElementById('keywords').value,
+                    content_type: document.getElementById('content_type').value,
+                    framework: document.getElementById('framework').value,
+                    audience: document.getElementById('audience').value,
+                    tone: document.getElementById('tone').value,
+                    additional_context: document.getElementById('additional_context').value,
+                    provider: document.getElementById('provider').value,
+                    word_count: document.getElementById('word_count').value,
+                    ...customData
+                };
+                
                 const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        keywords: document.getElementById('keywords').value,
-                        content_type: document.getElementById('content_type').value,
-                        framework: document.getElementById('framework').value,
-                        audience: document.getElementById('audience').value,
-                        tone: document.getElementById('tone').value,
-                        additional_context: document.getElementById('additional_context').value,
-                        provider: document.getElementById('provider').value,
-                        word_count: document.getElementById('word_count').value
-                    })
+                    body: JSON.stringify(payload)
                 });
                 
                 const data = await response.json();
@@ -559,13 +809,17 @@
                 }
                 
                 list.innerHTML = data.map(item => `
-                    <div class="history-item fade-in" onclick='loadHistoryItem(${JSON.stringify(item)})'>
+                    <div class="history-item fade-in">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
                                 <strong>${item.content_type}</strong> - ${item.framework}
                                 <small>${item.audience} | ${new Date(item.timestamp).toLocaleString('ro-RO')}</small>
                             </div>
-                            <span style="font-size: 1.5rem;">${getContentIcon(item.content_type)}</span>
+                            <div style="display: flex; gap: 10px;">
+                                <span style="font-size: 1.5rem;">${getContentIcon(item.content_type)}</span>
+                                <button onclick='loadHistoryItem(${JSON.stringify(item)})' style="padding: 5px 10px; font-size: 0.9em; background: #e0e0e0; border: none; border-radius: 5px; cursor: pointer;" title="Încarcă">Load</button>
+                                <button onclick='loadHistoryItemForExtension(${JSON.stringify(item)})' style="padding: 5px 10px; font-size: 0.9em; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;" title="Extinde">Ext</button>
+                            </div>
                         </div>
                     </div>
                 `).join('');
@@ -614,6 +868,11 @@
             showTab('generate');
         }
 
+        function loadHistoryItemForExtension(item) {
+            document.getElementById('extensionContent').value = item.content;
+            showTab('extension');
+        }
+
         function copyOutput() {
             if (!currentOutput) {
                 alert('❌ Niciun conținut de copiat!');
@@ -639,6 +898,93 @@
             a.click();
             URL.revokeObjectURL(url);
         }
+
+        function copyExtensionOutput() {
+            const extensionOutput = document.getElementById('extensionOutputContent').textContent;
+            if (!extensionOutput) {
+                alert('❌ Niciun conținut extins de copiat!');
+                return;
+            }
+            navigator.clipboard.writeText(extensionOutput).then(() => {
+                alert('✅ Conținut extins copiat în clipboard!');
+            }).catch(err => {
+                alert('❌ Eroare la copiere: ' + err.message);
+            });
+        }
+
+        function saveExtensionOutput() {
+            const extensionOutput = document.getElementById('extensionOutputContent').textContent;
+            if (!extensionOutput) {
+                alert('❌ Niciun conținut extins de salvat!');
+                return;
+            }
+            const blob = new Blob([extensionOutput], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `copyspell_extended_content_${new Date().toISOString().slice(0, 19)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('extensionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('extendBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>🔄 Se extinde...</span>';
+            
+            // Show loading indicator
+            document.getElementById('extensionOutput').innerHTML = `<div class="loading fade-in">Se procesează extinderea...</div>`;
+            document.getElementById('extensionOutput').style.display = 'block';
+            
+            try {
+                const payload = {
+                    initial_content: document.getElementById('extensionContent').value,
+                    expansion_type: document.getElementById('expansionType').value,
+                    expansion_focus: document.getElementById('expansionFocus').value
+                };
+                
+                // Send request to the extension service running on port 5001
+                const response = await fetch('http://localhost:5001/api/extend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const extensionOutput = data.result;
+                    document.getElementById('extensionOutputContent').textContent = extensionOutput;
+                    document.getElementById('extensionOutput').style.display = 'block';
+                    document.getElementById('extensionOutput').innerHTML = `
+                        <div class="output fade-in">
+                            <pre>${extensionOutput}</pre>
+                        </div>
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button onclick="copyExtensionOutput()" style="flex: 1; padding: 12px;">📋 Copiază</button>
+                            <button onclick="saveExtensionOutput()" style="flex: 1; padding: 12px;">💾 Salvează</button>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('extensionOutput').style.display = 'block';
+                    document.getElementById('extensionOutput').innerHTML = `
+                        <div class="error fade-in">
+                            ❌ Eroare: ${data.error || 'Extinderea a eșuat'}
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                document.getElementById('extensionOutput').innerHTML = `
+                    <div class="error fade-in">
+                        ❌ Eroare: ${err.message}
+                    </div>
+                `;
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = '<span>🔄 Extinde Conținut</span>';
+        });
 
         // Load config on page load
         window.addEventListener('load', () => {
