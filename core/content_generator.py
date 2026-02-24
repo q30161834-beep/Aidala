@@ -6,9 +6,9 @@ from datetime import datetime
 from config.prompts import PromptTemplates
 from config.settings import settings
 from models import AUDIENCES, TONES, CONTENT_TYPES, FRAMEWORKS
-from models.audience import get_audience_by_id
-from models.tone import get_tone_by_id
-from models.content_types import get_content_type_by_id
+from models.audience import get_audience_by_id, create_custom_audience
+from models.tone import get_tone_by_id, create_custom_tone
+from models.content_types import get_content_type_by_id, create_custom_content_type, create_custom_framework
 from .ai_router import AIRouter, RouterResult
 
 
@@ -82,14 +82,62 @@ class ContentGenerator:
         tone_id: str,
         additional_context: str = "",
         preferred_provider: Optional[str] = None,
-        word_count: str = "normal"
+        word_count: str = "normal",
+        custom_audience: Optional[Dict] = None,
+        custom_tone: Optional[Dict] = None,
+        custom_content_type: Optional[Dict] = None,
+        custom_framework: Optional[Dict] = None
     ) -> RouterResult:
-        """Generate content based on parameters."""
+        """Generate content based on parameters, with support for custom options."""
         
-        # Get full objects
-        audience = get_audience_by_id(audience_id)
-        tone = get_tone_by_id(tone_id)
-        content_type = get_content_type_by_id(content_type_id)
+        # Handle custom audience if provided
+        if custom_audience and audience_id.startswith("custom_"):
+            audience = create_custom_audience(
+                name=custom_audience.get("name", "Custom Audience"),
+                description=custom_audience.get("description", "Custom audience description"),
+                pain_points=custom_audience.get("pain_points", []),
+                desires=custom_audience.get("desires", []),
+                objections=custom_audience.get("objections", []),
+                language_style=custom_audience.get("language_style", "Casual")
+            )
+        else:
+            audience = get_audience_by_id(audience_id)
+        
+        # Handle custom tone if provided
+        if custom_tone and tone_id.startswith("custom_"):
+            tone = create_custom_tone(
+                name=custom_tone.get("name", "Custom Tone"),
+                description=custom_tone.get("description", "Custom tone description"),
+                characteristics=custom_tone.get("characteristics", []),
+                examples=custom_tone.get("examples", []),
+                best_for=custom_tone.get("best_for", [])
+            )
+        else:
+            tone = get_tone_by_id(tone_id)
+        
+        # Handle custom content type if provided
+        if custom_content_type and content_type_id.startswith("custom_"):
+            content_type = create_custom_content_type(
+                name=custom_content_type.get("name", "Custom Content Type"),
+                description=custom_content_type.get("description", "Custom content type description"),
+                optimal_length=custom_content_type.get("optimal_length", "Variable"),
+                key_elements=custom_content_type.get("key_elements", []),
+                best_practices=custom_content_type.get("best_practices", []),
+                platforms=custom_content_type.get("platforms", [])
+            )
+        else:
+            content_type = get_content_type_by_id(content_type_id)
+        
+        # Handle custom framework if provided
+        if custom_framework and framework.startswith("custom_"):
+            create_custom_framework(
+                name=custom_framework.get("name", "Custom Framework"),
+                description=custom_framework.get("description", "Custom framework description"),
+                steps=custom_framework.get("steps", []),
+                best_for=custom_framework.get("best_for", [])
+            )
+            # Use the custom framework name in the prompt
+            framework = custom_framework.get("name", "Custom Framework")
         
         # Build detailed audience description
         audience_desc = f"""{audience.name}
@@ -148,14 +196,62 @@ Exemple: {' | '.join(tone.examples[:2])}"""
         tone_id: str,
         additional_context: str = "",
         preferred_provider: Optional[str] = None,
-        word_count: str = "normal"
+        word_count: str = "normal",
+        custom_audience: Optional[Dict] = None,
+        custom_tone: Optional[Dict] = None,
+        custom_content_type: Optional[Dict] = None,
+        custom_framework: Optional[Dict] = None
     ) -> AsyncGenerator[str, None]:
-        """Generate content with streaming."""
+        """Generate content with streaming, with support for custom options."""
         
-        # Get full objects
-        audience = get_audience_by_id(audience_id)
-        tone = get_tone_by_id(tone_id)
-        content_type = get_content_type_by_id(content_type_id)
+        # Handle custom audience if provided
+        if custom_audience and audience_id.startswith("custom_"):
+            audience = create_custom_audience(
+                name=custom_audience.get("name", "Custom Audience"),
+                description=custom_audience.get("description", "Custom audience description"),
+                pain_points=custom_audience.get("pain_points", []),
+                desires=custom_audience.get("desires", []),
+                objections=custom_audience.get("objections", []),
+                language_style=custom_audience.get("language_style", "Casual")
+            )
+        else:
+            audience = get_audience_by_id(audience_id)
+        
+        # Handle custom tone if provided
+        if custom_tone and tone_id.startswith("custom_"):
+            tone = create_custom_tone(
+                name=custom_tone.get("name", "Custom Tone"),
+                description=custom_tone.get("description", "Custom tone description"),
+                characteristics=custom_tone.get("characteristics", []),
+                examples=custom_tone.get("examples", []),
+                best_for=custom_tone.get("best_for", [])
+            )
+        else:
+            tone = get_tone_by_id(tone_id)
+        
+        # Handle custom content type if provided
+        if custom_content_type and content_type_id.startswith("custom_"):
+            content_type = create_custom_content_type(
+                name=custom_content_type.get("name", "Custom Content Type"),
+                description=custom_content_type.get("description", "Custom content type description"),
+                optimal_length=custom_content_type.get("optimal_length", "Variable"),
+                key_elements=custom_content_type.get("key_elements", []),
+                best_practices=custom_content_type.get("best_practices", []),
+                platforms=custom_content_type.get("platforms", [])
+            )
+        else:
+            content_type = get_content_type_by_id(content_type_id)
+        
+        # Handle custom framework if provided
+        if custom_framework and framework.startswith("custom_"):
+            create_custom_framework(
+                name=custom_framework.get("name", "Custom Framework"),
+                description=custom_framework.get("description", "Custom framework description"),
+                steps=custom_framework.get("steps", []),
+                best_for=custom_framework.get("best_for", [])
+            )
+            # Use the custom framework name in the prompt
+            framework = custom_framework.get("name", "Custom Framework")
         
         # Build descriptions
         audience_desc = f"""{audience.name} - {audience.description}
@@ -242,3 +338,18 @@ Dorințe: {', '.join(audience.desires[:3])}"""
     def get_usage_stats(self) -> Dict[str, Dict]:
         """Get usage statistics."""
         return self.router.get_usage_stats()
+    
+    async def generate_from_prompt(
+        self,
+        prompt: str,
+        preferred_provider: Optional[str] = None,
+        max_tokens: int = 2000
+    ) -> RouterResult:
+        """Generate content from a custom prompt."""
+        result = await self.router.generate(
+            prompt=prompt,
+            system_prompt=PromptTemplates.SYSTEM_PROMPT,
+            preferred_provider=preferred_provider,
+            max_tokens=max_tokens
+        )
+        return result
