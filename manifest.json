@@ -1,0 +1,32 @@
+{
+  "name": "CopySpell AI",
+  "description": "Lista fisierelor care se actualizeaza automat",
+  "version": "1.0.0",
+  "files": [
+    "web_app.py",
+    "launcher.py",
+    "updater.py",
+    "version.json",
+    "config/settings.py",
+    "config/prompts.py",
+    "config/__init__.py",
+    "core/content_generator.py",
+    "core/ai_router.py",
+    "core/rate_limiter.py",
+    "core/__init__.py",
+    "providers/base.py",
+    "providers/deepseek.py",
+    "providers/groq.py",
+    "providers/openrouter.py",
+    "providers/__init__.py",
+    "models/__init__.py",
+    "templates/index.html"
+  ],
+  "optional_files": [
+    "templates/dashboard.html",
+    "templates/login.html",
+    "static/style.css",
+    "static/script.js"
+  ],
+  "notes": "Adauga sau scoate fisiere din lista 'files' pentru a controla ce se actualizeaza"
+}
